@@ -12,4 +12,6 @@ module.exports = {
   transform: {
     "^.+\\.ts?$": ["@swc/jest"],
   },
+  globalSetup: './jest.global-setup.ts',
+  globalTeardown: './jest.global-teardown.ts'
 };

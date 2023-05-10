@@ -1,14 +1,27 @@
-import { User } from "@prisma/client";
+import { PrismaClient, User} from "@prisma/client";
 import { prismaMock } from "../../../lib/Prisma/prisma.mock";
 import LoginService from "./login.service";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
 import bcrypt from "bcryptjs";
+import prisma from "../../../lib/Prisma/Prisma";
 
 describe("Login Service Test", () => {
   const PASSWORD_SALT = 10;
-  
-  beforeAll(() => {
+  let user: User;
+
+  beforeAll(async () => {
     process.env.API_TOKEN_KEY = "rockandstone";
+    prisma.$connect()
+
+    user = await prisma.user.create({
+      data: {
+        first_name: "Jonathan",
+        last_name: "Guths",
+        nickname: "jguths",
+        email: "jonathanguths@gmail.com",
+        password: "rockandstone",
+      }
+    })
   });
 
   it("should throw user not found error", async () => {
@@ -54,7 +67,7 @@ describe("Login Service Test", () => {
   });
 
   it("should return token and user without any error", async () => {
-    let password = 'rockandstone'
+    let password = "rockandstone";
 
     const user = {
       id: 1,
@@ -65,10 +78,7 @@ describe("Login Service Test", () => {
       password: "rockandstone",
     };
 
-    const encryptedPassword = await bcrypt.hash(
-      password,
-      PASSWORD_SALT
-    );
+    const encryptedPassword = await bcrypt.hash(password, PASSWORD_SALT);
 
     user.password = encryptedPassword;
 
@@ -80,6 +90,10 @@ describe("Login Service Test", () => {
 
     const loginResponse = await loginService.login(user.email, password);
 
-    expect(loginResponse).toHaveProperty('token');
+    expect(loginResponse).toHaveProperty("token");
+  });
+
+  test("get right .env", async () => {
+    console.log("USERRRR", user);
   });
 });

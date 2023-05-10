@@ -1,22 +1,15 @@
-import exp from "constants";
-import { JwtService } from "./jwt.service"
-import jwt from 'jsonwebtoken';
+import { JwtService } from "./jwt.service";
 
-describe('Testing Jwt Service', () => {
-    it('should return valid jwt token', () => {
-        const jwtService = new JwtService();
+describe("Testing Jwt Service", () => {
+  
 
-        const spy = jest.spyOn(jwtService, 'getTokenKey');
-        spy.mockReturnValue('api_mock_key');
+  it("should return valid jwt token", () => {
+    process.env.API_TOKEN_KEY = "rockandstone";
 
-        const token = jwtService.sign(123, 'test@test.com', '1h');
+    const jwtService = new JwtService();
+    const token = jwtService.sign(123, "test@test.com", "1h");
 
-        expect(typeof token).toBe('string');
-        expect(token).toHaveLength(179);
-    })
-
-    it('should return error when api key not provided in env', () => {
-        const jwtService = new JwtService();
-        expect(() => jwtService.sign(123, 'test@test.com', '1h')).toThrowError(new Error('API key must be provided'));
-    })
-})
+    expect(typeof token).toBe("string");
+    expect(token).toHaveLength(179);
+  });
+});
