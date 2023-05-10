@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id                  Int                 @id @default(autoincrement())
+  google_book_id      String              @unique(map: "google_book_id") @db.VarChar(255)
+  title               String
+  publisher           Publisher?          @relation(fields: [publisher_id], references: [id])
+  publisher_id        Int?
+  genre               Genre               @relation(fields: [genre_id], references: [id])
+  genre_id            Int
+  published_date      DateTime
+  description         String
+  page_count          Int
+  main_category       String?
+  average_rating      Float
+  image_link_small    String?
+  image_link_medium   String?
+  image_link_large    String?
+  language            String
+  list_price_amount   String?
+  list_price_currency String?
+  CategoriesOnBooks   CategoriesOnBooks[]
+  AuthorsOnBooks      AuthorsOnBooks[]
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  first_name String
+  last_name String
+  email String @unique(map: "email") @db.VarChar(255)
+  nickname String @unique(map: "nickname") @db.VarChar(255)
+  password String
+}
+
+model Publisher {
+  id   Int    @id @default(autoincrement())
+  name String
+  Book Book[]
+}
+
+model BookCategory {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  CategoriesOnBooks CategoriesOnBooks[]
+}
+
+model CategoriesOnBooks {
+  book             Book         @relation(fields: [book_id], references: [id])
+  book_id          Int
+  book_category    BookCategory @relation(fields: [book_category_id], references: [id])
+  book_category_id Int
+
+  @@id([book_id, book_category_id])
+}
+
+model AuthorsOnBooks {
+  book      Book   @relation(fields: [book_id], references: [id])
+  book_id   Int
+  author    Author @relation(fields: [author_id], references: [id])
+  author_id Int
+
+  @@id([book_id, author_id])
+}
+
+model Author {
+  id             Int              @id @default(autoincrement())
+  name           String
+  AuthorsOnBooks AuthorsOnBooks[]
+}
+
+model Genre {
+  id   Int    @id @default(autoincrement())
+  name String
+  Book Book[]
+}

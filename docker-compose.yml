@@ -1,0 +1,40 @@
+version: '1.0'
+services:
+  app:
+    container_name: muscle-brain-api
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - server-network
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    restart: always
+    container_name: muscle-brain-db
+    networks:
+      - server-network
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - server-network
+    ports:
+      - 8080:8080
+volumes:
+  postgres:
+networks:
+  server-network:
+    driver: bridge

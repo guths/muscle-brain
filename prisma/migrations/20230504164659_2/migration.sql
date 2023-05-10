@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "first_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
+    "nickname" VARCHAR(255) NOT NULL,
+    "password" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "email" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "nickname" ON "User"("nickname");
