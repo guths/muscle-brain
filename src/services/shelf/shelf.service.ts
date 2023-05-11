@@ -1,4 +1,5 @@
 import { removeSpecialCharacters } from "../../lib/Helper/string.helper";
+import prisma from "../../lib/Prisma/Prisma";
 import { ShelfRepository } from "../../repositories/shelf.repository";
 import { UserRepository } from "../../repositories/user.repository";
 
@@ -19,9 +20,9 @@ export class ShelfService {
 
     const corretedName = removeSpecialCharacters(name);
 
-    const shelfExist = await this.shelfRepository.findUnique({
+    const shelfExist = await this.shelfRepository.findFirst({
+      name: corretedName,
       user_id: user.id,
-      name: name,
     });
 
     if (shelfExist) {
@@ -29,9 +30,11 @@ export class ShelfService {
     }
 
     const shelf = await this.shelfRepository.create({
-      name: name,
+      name: corretedName,
       user_id: user.id,
     });
+
+    console.log(shelf);
 
     return shelf;
   }
