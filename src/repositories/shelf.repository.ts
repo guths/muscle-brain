@@ -5,9 +5,16 @@ export interface CreateShelfData {
   user_id: number
 }
 
+export interface UpdateShelfData {
+  id: number,
+  name: string,
+  user_id: number
+}
+
 export interface ShelfRepository {
   create(data: CreateShelfData): Promise<Shelf>
   findUnique(whereFields: object): Promise<Shelf|null>
   findFirst(whereFields: object): Promise<Shelf|null>
   update(whereFields: object, data: object): Promise<Shelf>
+  delete(whereFields: object)
 }

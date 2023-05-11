@@ -1,6 +1,9 @@
 import { removeSpecialCharacters } from "../../lib/Helper/string.helper";
 import prisma from "../../lib/Prisma/Prisma";
-import { ShelfRepository } from "../../repositories/shelf.repository";
+import {
+  ShelfRepository,
+  UpdateShelfData,
+} from "../../repositories/shelf.repository";
 import { UserRepository } from "../../repositories/user.repository";
 
 export class ShelfService {
@@ -15,7 +18,7 @@ export class ShelfService {
     });
 
     if (!user) {
-      throw new Error("User not exist");
+      throw new Error("User does not exist");
     }
 
     const corretedName = removeSpecialCharacters(name);
@@ -34,8 +37,46 @@ export class ShelfService {
       user_id: user.id,
     });
 
-    console.log(shelf);
-
     return shelf;
+  }
+
+  public async updateShelf(updatedShelfData: UpdateShelfData) {
+    const existShelf = this.shelfRepository.findUnique({
+      id: updatedShelfData.id,
+    });
+
+    if (!existShelf) {
+      throw new Error("Shelf does not exist.");
+    }
+
+    const correctedName = removeSpecialCharacters(updatedShelfData.name);
+
+    const existShelfSameName = await this.shelfRepository.findFirst({
+      name: correctedName,
+      user_id: updatedShelfData.user_id,
+    });
+
+    if (existShelfSameName) {
+      throw new Error("This name is already been used by other shelf.");
+    }
+
+    const updatedShelf = this.shelfRepository.update(
+      {
+        id: updatedShelfData.id,
+      },
+      {
+        name: correctedName,
+      }
+    );
+
+    return updatedShelf;
+  }
+
+  public async deleteShelf(shelfId: number) {
+    const deleteShelf = await this.shelfRepository.delete({
+      id: shelfId
+    });
+
+    return deleteShelf;
   }
 }

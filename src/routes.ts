@@ -13,5 +13,7 @@ routes.get('/v1/books/search', authMiddleware, googleBooksController.getBooksByT
 routes.post('/v1/user', registerValidator, authController.register);
 routes.post('/v1/login', loginValidator, authController.login);
 routes.post('/v1/shelf', authMiddleware, shelfMiddleware, shelfController.create);
+routes.post('/v1/shelf/:bookId', authMiddleware, shelfMiddleware, shelfController.update);
+routes.delete('/v1/shelf/:bookId', authMiddleware, shelfMiddleware, shelfController.deleteShelf)
 
 export default routes;
