@@ -24,3 +24,6 @@ const authMiddleware = (
 
   next();
 };
+
+
+export {authMiddleware}

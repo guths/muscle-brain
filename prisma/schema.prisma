@@ -32,21 +32,28 @@ model Book {
   list_price_currency String?
   CategoriesOnBooks   CategoriesOnBooks[]
   AuthorsOnBooks      AuthorsOnBooks[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model User {
   id Int @id @default(autoincrement())
   first_name String
   last_name String
+  Shelf Shelf[]
   email String @unique(map: "email") @db.VarChar(255)
   nickname String @unique(map: "nickname") @db.VarChar(255)
   password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Publisher {
   id   Int    @id @default(autoincrement())
   name String
   Book Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model BookCategory {
@@ -77,10 +84,25 @@ model Author {
   id             Int              @id @default(autoincrement())
   name           String
   AuthorsOnBooks AuthorsOnBooks[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Genre {
   id   Int    @id @default(autoincrement())
   name String
   Book Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
+
+model Shelf {
+  id Int @id @default(autoincrement())
+  name String
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+
