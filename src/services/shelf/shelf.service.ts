@@ -1,3 +1,4 @@
+import { Forbidden } from "../../lib/Errors/errors";
 import { removeSpecialCharacters } from "../../lib/Helper/string.helper";
 import prisma from "../../lib/Prisma/Prisma";
 import {
@@ -41,12 +42,16 @@ export class ShelfService {
   }
 
   public async updateShelf(updatedShelfData: UpdateShelfData) {
-    const existShelf = this.shelfRepository.findUnique({
+    const existShelf = await this.shelfRepository.findUnique({
       id: updatedShelfData.id,
     });
 
     if (!existShelf) {
       throw new Error("Shelf does not exist.");
+    }
+
+    if (existShelf.user_id !== updatedShelfData.user_id) {
+      throw new Forbidden("User is trying to update other user shelf");
     }
 
     const correctedName = removeSpecialCharacters(updatedShelfData.name);
@@ -72,9 +77,21 @@ export class ShelfService {
     return updatedShelf;
   }
 
-  public async deleteShelf(shelfId: number) {
+  public async deleteShelf(shelfId: number, userId: number) {
+    const existShelf = await this.shelfRepository.findUnique({
+      id: shelfId,
+    });
+
+    if (!existShelf) {
+      throw new Error("Shelf does not exist.");
+    }
+
+    if (existShelf.user_id !== userId) {
+      throw new Forbidden("User is trying to delete other user shelf");
+    }
+
     const deleteShelf = await this.shelfRepository.delete({
-      id: shelfId
+      id: shelfId,
     });
 
     return deleteShelf;

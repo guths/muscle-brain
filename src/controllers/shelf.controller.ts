@@ -45,17 +45,17 @@ class ShelfController {
     }
   }
 
-  async deleteShelf(request: Request, response: Response, next: NextFunction) {
+  async deleteShelf(request: any, response: Response, next: NextFunction) {
     validateRequest(request, response);
     const userRepository = new PrismaUserRepository();
     const shelfRepository = new PrismaShelfRepository();
     const shelfService = new ShelfService(shelfRepository, userRepository);
 
     try {
-      const deletedShelf = await shelfService.deleteShelf(
-        Number(request.params.bookId)
+      await shelfService.deleteShelf(
+        Number(request.params.bookId),
+        request.user.user_id
       );
-      console.log(deletedShelf);
       return ResponseHelper.deleted(response);
     } catch (e) {
       next(e);
