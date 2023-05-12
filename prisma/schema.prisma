@@ -101,6 +101,7 @@ model Shelf {
   name String
   user User @relation(fields: [user_id], references: [id])
   user_id Int
+  is_default Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }

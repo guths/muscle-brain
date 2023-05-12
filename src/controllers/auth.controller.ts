@@ -6,6 +6,7 @@ import { PrismaUserRepository } from "../repositories/prisma/prisma.user.reposit
 import { validateRequest } from "../validators/validator";
 import { LoginDto } from "../dto/login.dto";
 import LoginService from "../services/auth/login/login.service";
+import { PrismaShelfRepository } from "../repositories/prisma/prisma.shelf.repository";
 class AuthController {
   public async register(
     request: Request,
@@ -22,7 +23,7 @@ class AuthController {
       password: request.body.password,
     } as RegisterDto;
 
-    const registerService = new RegisterService(new PrismaUserRepository());
+    const registerService = new RegisterService(new PrismaUserRepository(), new PrismaShelfRepository());
 
     try {
       const user = await registerService.register(registerRequest);

@@ -4,11 +4,16 @@ import bcrypt from "bcryptjs";
 import { JwtService } from "../token/jwt.service";
 import prisma from "../../../lib/Prisma/Prisma";
 import { UserRepository } from "../../../repositories/user.repository";
+import { ShelfService } from "../../shelf/shelf.service";
+import { ShelfRepository } from "../../../repositories/shelf.repository";
 
 const PASSWORD_SALT = 10;
 
 export class RegisterService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private shelfRepository: ShelfRepository
+  ) {}
 
   public async register(registerRequest: RegisterDto): Promise<Object> {
     const oldUser = await prisma.user.findUnique({
@@ -25,10 +30,10 @@ export class RegisterService {
       where: {
         nickname: registerRequest.nickname,
       },
-    })
+    });
 
-    if(nicknameCheck) {
-      throw new Error("Nickname already been taken")
+    if (nicknameCheck) {
+      throw new Error("Nickname already been taken");
     }
 
     const encryptedPassword = await bcrypt.hash(
@@ -44,6 +49,13 @@ export class RegisterService {
       password: encryptedPassword,
     });
 
+    const shelfService = new ShelfService(
+      this.shelfRepository,
+      this.userRepository
+    );
+
+    await shelfService.createDefaultShelvesForUser(user.id);
+
     const jwtService = new JwtService();
 
     const token = jwtService.sign(user.id, user.email, "24h");
@@ -54,7 +66,7 @@ export class RegisterService {
       last_name: user.last_name,
       nickname: user.nickname,
       email: user.email,
-      token: token
-    }
+      token: token,
+    };
   }
 }

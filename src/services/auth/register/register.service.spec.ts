@@ -3,6 +3,7 @@ import { prismaMock } from "../../../lib/Prisma/prisma.mock";
 import { RegisterService } from "./register.service";
 import { RegisterDto } from "../../../dto/register.dto";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
+import { PrismaShelfRepository } from "../../../repositories/prisma/prisma.shelf.repository";
 
 describe("Register Service Test", () => {
   beforeAll(() => {
@@ -23,7 +24,7 @@ describe("Register Service Test", () => {
 
     prismaMock.user.create.mockResolvedValue(user as User);
 
-    const registerService = new RegisterService(new PrismaUserRepository());
+    const registerService = new RegisterService(new PrismaUserRepository(), new PrismaShelfRepository);
 
     const createdUser = await registerService.register(
       registerRequest as unknown as RegisterDto
@@ -50,7 +51,7 @@ describe("Register Service Test", () => {
 
     prismaMock.user.findUnique.mockResolvedValue(user as User);
 
-    const registerService = new RegisterService(new PrismaUserRepository());
+    const registerService = new RegisterService(new PrismaUserRepository(), new PrismaShelfRepository);
     
     expect(
         async () => await registerService.register(registerRequest as unknown as RegisterDto)

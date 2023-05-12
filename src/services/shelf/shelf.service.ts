@@ -8,6 +8,8 @@ import {
 import { UserRepository } from "../../repositories/user.repository";
 
 export class ShelfService {
+  DEFAULT_SHELF_NAMES = ["Read", "Reading", "Want to read"];
+
   constructor(
     private shelfRepository: ShelfRepository,
     private userRepository: UserRepository
@@ -36,6 +38,7 @@ export class ShelfService {
     const shelf = await this.shelfRepository.create({
       name: corretedName,
       user_id: user.id,
+      is_default: false
     });
 
     return shelf;
@@ -95,5 +98,23 @@ export class ShelfService {
     });
 
     return deleteShelf;
+  }
+
+  public async createDefaultShelvesForUser(userId: number): Promise<void> {
+    try {
+      for (const shelfName of this.DEFAULT_SHELF_NAMES) {
+        const shelf = await this.shelfRepository.create({
+          name: shelfName,
+          user_id: userId,
+          is_default: true
+        });
+
+        console.log(shelf);
+      }
+    } catch (e) {
+      throw new Error(
+        `Error while creating default shelves for User ID = ${userId}`
+      );
+    }
   }
 }

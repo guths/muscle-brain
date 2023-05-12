@@ -30,7 +30,7 @@ export class PrismaShelfRepository implements ShelfRepository {
     });
   }
 
-  delete(whereFields: object) {
+  delete(whereFields: object): Promise<Shelf> {
     return prisma.shelf.delete({
       where: whereFields,
     });
