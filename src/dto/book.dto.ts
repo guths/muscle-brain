@@ -13,5 +13,6 @@ export interface CreateBookDto {
     language: string
     list_price_amount?: string;
     list_price_currency?: String;
-    category_name: string;
+    category_names: Array<string>;
+    authors: Array<string>
 }
