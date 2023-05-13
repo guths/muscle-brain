@@ -32,26 +32,27 @@ model Book {
   list_price_currency String?
   CategoriesOnBooks   CategoriesOnBooks[]
   AuthorsOnBooks      AuthorsOnBooks[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  shelves             BooksOnShelves[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @default(now())
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   first_name String
-  last_name String
-  Shelf Shelf[]
-  email String @unique(map: "email") @db.VarChar(255)
-  nickname String @unique(map: "nickname") @db.VarChar(255)
-  password String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  last_name  String
+  Shelf      Shelf[]
+  email      String   @unique(map: "email") @db.VarChar(255)
+  nickname   String   @unique(map: "nickname") @db.VarChar(255)
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Publisher {
-  id   Int    @id @default(autoincrement())
-  name String
-  Book Book[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  Book      Book[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -84,26 +85,34 @@ model Author {
   id             Int              @id @default(autoincrement())
   name           String
   AuthorsOnBooks AuthorsOnBooks[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
 }
 
 model Genre {
-  id   Int    @id @default(autoincrement())
-  name String
-  Book Book[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  Book      Book[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model Shelf {
-  id Int @id @default(autoincrement())
-  name String
-  user User @relation(fields: [user_id], references: [id])
-  user_id Int
-  is_default Boolean? @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id         Int              @id @default(autoincrement())
+  name       String
+  user       User             @relation(fields: [user_id], references: [id])
+  user_id    Int
+  books      BooksOnShelves[]
+  is_default Boolean?         @default(false)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @default(now())
 }
 
+model BooksOnShelves {
+  book     Book  @relation(fields: [book_id], references: [id])
+  book_id  Int
+  shelf    Shelf @relation(fields: [shelf_id], references: [id])
+  shelf_id Int
 
+  @@id([book_id, shelf_id])
+}

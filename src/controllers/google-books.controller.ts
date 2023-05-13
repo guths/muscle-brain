@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import GoogleBooksService from "../services/google-books-api/GoogleBooksService";
+import GoogleBooksService from "../services/google-books-api/google-book.service";
 import ResponseHelper from "../lib/HttpResponse/ResponseHelper";
 import { UnprocessableEntity } from "../lib/Errors/errors";
 

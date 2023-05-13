@@ -29,6 +29,6 @@ export default class GoogleBooksService {
   public async getBookById(id: string) {
     let url = `${this.API_URL}/${id}`;
 
-    return await this.getBookById(url);
+    return await this.getInGoogleApi(url);
   }
 }
