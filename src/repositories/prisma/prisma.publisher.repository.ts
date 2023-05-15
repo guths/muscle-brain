@@ -8,6 +8,7 @@ export class PrismaPublisherRepository implements PublisherRepository {
             data: createPublisherData
         })
     }
+    
     findUnique(whereFields: object): Promise<Publisher | null> {
         return prisma.publisher.findUnique({
             where: whereFields

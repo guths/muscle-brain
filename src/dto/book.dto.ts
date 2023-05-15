@@ -1,7 +1,7 @@
 export interface CreateBookDto {
     google_book_id: string;
+    title: string;
     publisher_name: string;
-    genre_name: string;
     published_date: Date;
     description: string;
     page_count: number;

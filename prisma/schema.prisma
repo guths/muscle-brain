@@ -30,8 +30,8 @@ model Book {
   language            String
   list_price_amount   String?
   list_price_currency String?
-  CategoriesOnBooks   CategoriesOnBooks[]
-  AuthorsOnBooks      AuthorsOnBooks[]
+  categories_books    CategoriesOnBooks[]
+  authors             AuthorsOnBooks[]
   shelves             BooksOnShelves[]
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @default(now())
