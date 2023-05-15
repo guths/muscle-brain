@@ -7,4 +7,5 @@ export interface CreateBookCategoryData {
 export interface BookCategoryRepository {
     create(createBookCategoryData: CreateBookCategoryData): Promise<BookCategory>
     findUnique(whereFields: object): Promise<BookCategory | null>
+    findFirst(whereFields: object): Promise<BookCategory | null>
 }

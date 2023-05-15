@@ -17,18 +17,16 @@ model Book {
   title               String
   publisher           Publisher?          @relation(fields: [publisher_id], references: [id])
   publisher_id        Int?
-  genre               Genre               @relation(fields: [genre_id], references: [id])
-  genre_id            Int
   published_date      DateTime
-  description         String
+  description         String?
   page_count          Int
   main_category       String?
-  average_rating      Float
+  average_rating      Float?
   image_link_small    String?
   image_link_medium   String?
   image_link_large    String?
   language            String
-  list_price_amount   String?
+  list_price_amount   Float?
   list_price_currency String?
   categories_books    CategoriesOnBooks[]
   authors             AuthorsOnBooks[]
@@ -58,9 +56,9 @@ model Publisher {
 }
 
 model BookCategory {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  CategoriesOnBooks CategoriesOnBooks[]
+  id    Int                 @id @default(autoincrement())
+  name  String
+  books CategoriesOnBooks[]
 }
 
 model CategoriesOnBooks {
@@ -82,19 +80,11 @@ model AuthorsOnBooks {
 }
 
 model Author {
-  id             Int              @id @default(autoincrement())
-  name           String
-  AuthorsOnBooks AuthorsOnBooks[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
-}
-
-model Genre {
-  id        Int      @id @default(autoincrement())
+  id        Int              @id @default(autoincrement())
   name      String
-  Book      Book[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  books     AuthorsOnBooks[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
 }
 
 model Shelf {

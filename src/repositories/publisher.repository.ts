@@ -7,4 +7,5 @@ export interface CreatePublisherData {
 export interface PublisherRepository {
     create(createPublisherData: CreatePublisherData): Promise<Publisher>
     findUnique(whereFields: object): Promise<Publisher | null>
+    findFirst(whereFields: object): Promise<Publisher | null>
 }

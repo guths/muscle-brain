@@ -7,4 +7,5 @@ export interface CreateAuthorData {
 export interface AuthorRepository {
     create(createAuthorData: CreateAuthorData): Promise<Author>
     findUnique(whereFields: object): Promise<Author | null>
+    findFirst(whereFields: object): Promise<Author | null>
 }

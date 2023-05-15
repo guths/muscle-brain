@@ -7,6 +7,7 @@ import { authMiddleware } from "./middleware/auth";
 import { shelfMiddleware } from "./middleware/shelf";
 import shelfController from "./controllers/shelf.controller";
 import { createShelfValidator, deleteShelfValidator, updateShelfValidator } from "./validators/shelf.validator";
+import { bookController } from "./controllers/book.controller";
 
 const routes = Router();
 
@@ -40,5 +41,11 @@ routes.delete(
   deleteShelfValidator,
   shelfController.deleteShelf
 );
+
+routes.post(
+  "/v1/book/shelf",
+  authMiddleware,
+  bookController.addBookShelf
+)
 
 export default routes;

@@ -8,9 +8,10 @@ export interface CreateShelfData {
 
 export interface UpdateShelfData {
   id: number,
-  name: string,
-  user_id: number,
-  is_default: boolean | null
+  name?: string,
+  user_id?: number,
+  is_default?: boolean | null
+  books?: object|null
 }
 
 export interface ShelfRepository {

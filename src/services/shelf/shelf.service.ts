@@ -38,7 +38,7 @@ export class ShelfService {
     const shelf = await this.shelfRepository.create({
       name: corretedName,
       user_id: user.id,
-      is_default: false
+      is_default: false,
     });
 
     return shelf;
@@ -57,24 +57,26 @@ export class ShelfService {
       throw new Forbidden("User is trying to update other user shelf");
     }
 
-    const correctedName = removeSpecialCharacters(updatedShelfData.name);
+    if (updatedShelfData.name) {
+      const correctedName = removeSpecialCharacters(updatedShelfData.name);
 
-    const existShelfSameName = await this.shelfRepository.findFirst({
-      name: correctedName,
-      user_id: updatedShelfData.user_id,
-    });
+      const existShelfSameName = await this.shelfRepository.findFirst({
+        name: correctedName,
+        user_id: updatedShelfData.user_id,
+      });
 
-    if (existShelfSameName) {
-      throw new Error("This name is already been used by other shelf.");
+      if (existShelfSameName) {
+        throw new Error("This name is already been used by other shelf.");
+      }
+
+      updatedShelfData.name = correctedName;
     }
 
     const updatedShelf = this.shelfRepository.update(
       {
         id: updatedShelfData.id,
       },
-      {
-        name: correctedName,
-      }
+      updatedShelfData
     );
 
     return updatedShelf;
@@ -106,7 +108,7 @@ export class ShelfService {
         const shelf = await this.shelfRepository.create({
           name: shelfName,
           user_id: userId,
-          is_default: true
+          is_default: true,
         });
 
         console.log(shelf);
