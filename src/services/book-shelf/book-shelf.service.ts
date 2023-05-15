@@ -29,8 +29,6 @@ export class BookShelfService {
 
     const shelfService = new ShelfService(this.shelfRepository, this.userRepository);
 
-    console.log(book);
-
     const shelf = await this.shelfRepository.findUnique({
       id: bookShelfDto.shelf_id,
     });
@@ -44,26 +42,20 @@ export class BookShelfService {
     }
 
     if (book) {
-      await this.shelfRepository.update(
-        {
-          id: bookShelfDto.shelf_id,
-        },
-        {
-          books: {
-            create: [
-              {
-                book: {
-                  connect: {
-                    id: book.id,
-                  },
+      return await shelfService.updateShelf({
+        id: shelf.id,
+        books: {
+          create: [
+            {
+              book: {
+                connect: {
+                  id: book.id,
                 },
               },
-            ],
-          },
-        }
-      );
-
-      return;
+            },
+          ],
+        },
+      })      
     }
 
     const googleBookService = new GoogleBooksService();
