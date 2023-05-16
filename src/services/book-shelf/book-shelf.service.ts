@@ -1,17 +1,20 @@
 import { BookShelfDto } from "../../dto/book-shelf.dto";
 import { ShelfService } from "../shelf/shelf.service";
 import { CreateBookDto } from "../../dto/book.dto";
-import { Forbidden, NotFound } from "../../lib/Errors/errors";
+import {
+  Forbidden,
+  NotFound,
+  UnprocessableEntity,
+} from "../../lib/Errors/errors";
 import { AuthorRepository } from "../../repositories/author.repository";
 import { BookCategoryRepository } from "../../repositories/book-category.repository";
 import { BookRepository } from "../../repositories/book.repository";
-import { GenreRepository } from "../../repositories/genre.repository";
 import { PublisherRepository } from "../../repositories/publisher.repository";
 import { ShelfRepository } from "../../repositories/shelf.repository";
 import { BookService } from "../book/book.service";
 import GoogleBooksService from "../google-books-api/google-book.service";
 import { UserRepository } from "../../repositories/user.repository";
-import prisma from "../../lib/Prisma/Prisma";
+import { BookShelfRepository } from "../../repositories/book-shelf.repository";
 
 export class BookShelfService {
   constructor(
@@ -20,7 +23,8 @@ export class BookShelfService {
     private publisherRepository: PublisherRepository,
     private authorRepository: AuthorRepository,
     private bookCategoryRepository: BookCategoryRepository,
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
+    private bookShelfRepository: BookShelfRepository
   ) {}
 
   public async addBookInShelf(bookShelfDto: BookShelfDto) {
@@ -37,7 +41,16 @@ export class BookShelfService {
       google_book_id: bookShelfDto.google_book_id,
     });
 
-    //jeito aqui eh criar mais um repositorio da relacao e manipular ele
+    if (book && shelf) {
+      const relationExists = await this.bookShelfRepository.findFirst({
+        book_id: book.id,
+        shelf_id: shelf.id,
+      });
+
+      if (relationExists) {
+        throw new UnprocessableEntity("This book already have this shelf.");
+      }
+    }
 
     if (!shelf) {
       throw new NotFound("The shelf id provided does not exist");
@@ -48,7 +61,7 @@ export class BookShelfService {
     }
 
     if (book) {
-      return await shelfService.updateShelf({
+      await shelfService.updateShelf({
         id: shelf.id,
         user_id: shelf.user_id,
         books: {
@@ -63,13 +76,15 @@ export class BookShelfService {
           ],
         },
       });
+
+      return book;
     }
 
     const googleBookService = new GoogleBooksService();
     const googleBookResponse = await googleBookService.getBookById(
       bookShelfDto.google_book_id
     );
-
+   
     const createBookDto = {
       google_book_id: googleBookResponse.id,
       title: googleBookResponse.volumeInfo.title,
@@ -97,9 +112,10 @@ export class BookShelfService {
     const createdBook = await bookService.createBook(createBookDto);
 
     if (!createdBook) {
+      throw new UnprocessableEntity('The book was not created with success')
     }
 
-    return await this.shelfRepository.update(
+    await this.shelfRepository.update(
       {
         id: bookShelfDto.shelf_id,
       },
@@ -117,5 +133,9 @@ export class BookShelfService {
         },
       }
     );
+
+    return createdBook;
   }
+
+  removeBookShelf(bookId: number, shelfId: number)
 }

@@ -10,6 +10,7 @@ import { BookShelfService } from "../services/book-shelf/book-shelf.service";
 import { PrismaShelfRepository } from "../repositories/prisma/prisma.shelf.repository";
 import { PrismaUserRepository } from "../repositories/prisma/prisma.user.repository";
 import ResponseHelper from "../lib/HttpResponse/ResponseHelper";
+import { PrismaBookShelfRepository } from "../repositories/prisma/prisma.book-shelf.repository";
 
 class BookController {
   public async addBookShelf(
@@ -32,7 +33,8 @@ class BookController {
       new PrismaPublisherRepository(),
       new PrismaAuthorRepository(),
       new PrismaBookCategoryRepository(),
-      new PrismaUserRepository()
+      new PrismaUserRepository(),
+      new PrismaBookShelfRepository()
     );
 
     try {

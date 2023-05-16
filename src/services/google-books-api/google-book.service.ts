@@ -1,3 +1,4 @@
+import { NotFound } from "../../lib/Errors/errors";
 import Logger from "../../lib/Logger/Logger";
 import GoogleBookCredentials from "./GoogleBooksCredentials";
 import axios from "axios";
@@ -27,8 +28,13 @@ export default class GoogleBooksService {
   }
 
   public async getBookById(id: string) {
-    let url = `${this.API_URL}/${id}`;
+    try {
+      let url = `${this.API_URL}/${id}`;
 
     return await this.getInGoogleApi(url);
+    } catch(e) {
+      throw new NotFound("Provided Google Book ID not found");
+    }
+    
   }
 }
