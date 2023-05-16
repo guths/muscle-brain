@@ -45,6 +45,7 @@ routes.delete(
 routes.post(
   "/v1/book/shelf",
   authMiddleware,
+  shelfMiddleware,
   bookController.addBookShelf
 )
 

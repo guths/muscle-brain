@@ -11,6 +11,7 @@ import { ShelfRepository } from "../../repositories/shelf.repository";
 import { BookService } from "../book/book.service";
 import GoogleBooksService from "../google-books-api/google-book.service";
 import { UserRepository } from "../../repositories/user.repository";
+import prisma from "../../lib/Prisma/Prisma";
 
 export class BookShelfService {
   constructor(
@@ -23,15 +24,20 @@ export class BookShelfService {
   ) {}
 
   public async addBookInShelf(bookShelfDto: BookShelfDto) {
-    const book = await this.bookRepository.findUnique({
-      google_book_id: bookShelfDto.google_book_id,
-    });
-
-    const shelfService = new ShelfService(this.shelfRepository, this.userRepository);
+    const shelfService = new ShelfService(
+      this.shelfRepository,
+      this.userRepository
+    );
 
     const shelf = await this.shelfRepository.findUnique({
       id: bookShelfDto.shelf_id,
     });
+
+    const book = await this.bookRepository.findUnique({
+      google_book_id: bookShelfDto.google_book_id,
+    });
+
+    //jeito aqui eh criar mais um repositorio da relacao e manipular ele
 
     if (!shelf) {
       throw new NotFound("The shelf id provided does not exist");
@@ -44,6 +50,7 @@ export class BookShelfService {
     if (book) {
       return await shelfService.updateShelf({
         id: shelf.id,
+        user_id: shelf.user_id,
         books: {
           create: [
             {
@@ -55,7 +62,7 @@ export class BookShelfService {
             },
           ],
         },
-      })      
+      });
     }
 
     const googleBookService = new GoogleBooksService();
