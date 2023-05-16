@@ -18,9 +18,10 @@ export class PrismaShelfRepository implements ShelfRepository {
     });
   }
 
-  findUnique(whereFields: object): Promise<Shelf | null> {
+  findUnique(whereFields: object, includeFields: object): Promise<Shelf | null> {
     return prisma.shelf.findUnique({
       where: whereFields,
+      include: includeFields
     });
   }
 

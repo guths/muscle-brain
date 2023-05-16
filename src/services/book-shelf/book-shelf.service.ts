@@ -84,7 +84,7 @@ export class BookShelfService {
     const googleBookResponse = await googleBookService.getBookById(
       bookShelfDto.google_book_id
     );
-   
+
     const createBookDto = {
       google_book_id: googleBookResponse.id,
       title: googleBookResponse.volumeInfo.title,
@@ -112,7 +112,7 @@ export class BookShelfService {
     const createdBook = await bookService.createBook(createBookDto);
 
     if (!createdBook) {
-      throw new UnprocessableEntity('The book was not created with success')
+      throw new UnprocessableEntity("The book was not created with success");
     }
 
     await this.shelfRepository.update(
@@ -137,5 +137,62 @@ export class BookShelfService {
     return createdBook;
   }
 
-  removeBookShelf(bookId: number, shelfId: number)
+  public async removeBookShelf(
+    bookId: number,
+    shelfId: number,
+    userId: number
+  ): Promise<boolean> {
+    const shelf = await this.shelfRepository.findUnique({
+      id: shelfId,
+    });
+
+    const book = await this.bookRepository.findUnique({
+      id: bookId,
+    });
+
+    if (shelf?.user_id !== userId) {
+      throw new Forbidden("User is trying to add book in another user shelf");
+    }
+
+    if (!shelf) {
+      throw new NotFound("The shelf id provided does not exist");
+    }
+
+    if (!book) {
+      throw new NotFound("The book id provided does not exist");
+    }
+
+    const relationExists = await this.bookShelfRepository.findFirst({
+      book_id: book.id,
+      shelf_id: shelf.id,
+    });
+
+    if (!relationExists) {
+      throw new UnprocessableEntity("This book is not in shelf");
+    }
+
+    const deletedCount = await this.bookShelfRepository.deleteMany({
+      book_id: book.id,
+      shelf_id: shelf.id,
+    });
+
+    if (deletedCount["count"] > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public async getShelfBooks(shelfId: number) {
+    const books = await this.shelfRepository.findUnique(
+      {
+        id: shelfId,
+      },
+      {
+        book: true,
+      }
+    );
+
+    return books;
+  }
 }

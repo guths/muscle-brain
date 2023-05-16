@@ -8,4 +8,10 @@ export class PrismaBookShelfRepository implements BookShelfRepository {
       where: whereFields,
     });
   }
+
+  deleteMany(whereFields: object): Promise<object> {
+    return prisma.booksOnShelves.deleteMany({
+      where: whereFields,
+    });
+  }
 }

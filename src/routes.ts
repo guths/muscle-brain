@@ -27,6 +27,7 @@ routes.post(
   createShelfValidator,
   shelfController.create
 );
+
 routes.post(
   "/v1/shelf/:bookId",
   authMiddleware,
@@ -34,6 +35,7 @@ routes.post(
   updateShelfValidator,
   shelfController.update
 );
+
 routes.delete(
   "/v1/shelf/:bookId",
   authMiddleware,
@@ -47,6 +49,13 @@ routes.post(
   authMiddleware,
   shelfMiddleware,
   bookController.addBookShelf
+)
+
+routes.delete(
+  "/v1/book/shelf",
+  authMiddleware,
+  shelfMiddleware,
+  bookController.removeBookShelf
 )
 
 export default routes;

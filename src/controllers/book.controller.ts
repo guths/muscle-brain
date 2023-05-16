@@ -18,7 +18,6 @@ class BookController {
     response: Response,
     next: NextFunction
   ) {
-    
     validateRequest(request, response);
 
     const bookShelfDto = {
@@ -41,7 +40,37 @@ class BookController {
       const book = await bookShelfService.addBookInShelf(bookShelfDto);
 
       return ResponseHelper.ok(response, book);
-    } catch(e) {
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async removeBookShelf(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    validateRequest(request, response);
+
+    const bookShelfService = new BookShelfService(
+      new PrismaBookRepository(),
+      new PrismaShelfRepository(),
+      new PrismaPublisherRepository(),
+      new PrismaAuthorRepository(),
+      new PrismaBookCategoryRepository(),
+      new PrismaUserRepository(),
+      new PrismaBookShelfRepository()
+    );
+
+    try {
+      await bookShelfService.removeBookShelf(
+        request.body.book_id,
+        request.body.shelf_id,
+        request.body.user_id
+      );
+
+      return ResponseHelper.deleted(response);
+    } catch (e) {
       next(e);
     }
   }
