@@ -15,11 +15,11 @@ export const shelfMiddleware = async (
     new PrismaUserRepository()
   );
 
-  
+  let shelfId = Number(request.params.shelfId) ? Number(request.params.shelfId) : request.body.shelf_id;   
 
   try {
     const shelf = await shelfService.findShelfById(
-      Number(request.params.shelfId)
+      Number(shelfId)
     );
 
     if (shelf?.user_id !== request.user.user_id) {

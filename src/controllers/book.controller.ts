@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BookShelfDto } from "../dto/book-shelf.dto";
 import { validateRequest } from "../validators/validator";
-import { BookService } from "../services/book/book.service";
 import { PrismaBookRepository } from "../repositories/prisma/prisma.book.repository";
 import { PrismaPublisherRepository } from "../repositories/prisma/prisma.publisher.repository";
 import { PrismaAuthorRepository } from "../repositories/prisma/prisma.author.repository";
@@ -23,7 +22,6 @@ class BookController {
     const bookShelfDto = {
       google_book_id: request.body.google_book_id,
       shelf_id: request.body.shelf_id,
-      user_id: request.body.user_id,
     } as BookShelfDto;
 
     const bookShelfService = new BookShelfService(
@@ -66,7 +64,6 @@ class BookController {
       await bookShelfService.removeBookShelf(
         request.body.book_id,
         request.body.shelf_id,
-        request.body.user_id
       );
 
       return ResponseHelper.deleted(response);

@@ -13,4 +13,9 @@ const deleteShelfValidator = [
   param("bookId").exists().withMessage("Book id route param is required"),
 ];
 
-export { createShelfValidator, updateShelfValidator, deleteShelfValidator };
+const addShelfBookValidator = [
+  check("google_book_id").trim().notEmpty().withMessage('google_book_id is required'),
+  check("shelf_id").isNumeric().notEmpty().withMessage('shelf_id is required')
+]
+
+export { createShelfValidator, updateShelfValidator, deleteShelfValidator, addShelfBookValidator };

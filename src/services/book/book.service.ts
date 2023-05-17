@@ -4,6 +4,7 @@ import { AuthorRepository } from "../../repositories/author.repository";
 import { BookCategoryRepository } from "../../repositories/book-category.repository";
 import { PublisherRepository } from "../../repositories/publisher.repository";
 import { BookRepository } from "../../repositories/book.repository";
+import { NotFound } from "../../lib/Errors/errors";
 
 export class BookService {
   constructor(
@@ -112,5 +113,17 @@ export class BookService {
     });
 
     return createdBook;
+  }
+
+  public async findBookById(bookid: number): Promise<Book> {
+    const book = await this.bookRepository.findUnique({
+      id: bookid,
+    });
+
+    if (!book) {
+      throw new NotFound("Book not found");
+    }
+
+    return book;
   }
 }

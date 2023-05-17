@@ -9,7 +9,7 @@ export function validateRequest(request: Request, response: Response) {
   }
 }
 
-export const validateReqMidleware = (schemas: any) => {
+export const validateReqMiddleware = (schemas: any) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     await Promise.all(schemas.map((schema: any) => schema.run(req)));
 

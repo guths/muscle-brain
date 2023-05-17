@@ -50,17 +50,7 @@ export class BookShelfService {
       if (relationExists) {
         throw new UnprocessableEntity("This book already have this shelf.");
       }
-    }
 
-    if (!shelf) {
-      throw new NotFound("The shelf id provided does not exist");
-    }
-
-    if (shelf.user_id !== bookShelfDto.user_id) {
-      throw new Forbidden("User is trying to add book in another user shelf");
-    }
-
-    if (book) {
       await shelfService.updateShelf({
         id: shelf.id,
         user_id: shelf.user_id,
@@ -140,31 +130,10 @@ export class BookShelfService {
   public async removeBookShelf(
     bookId: number,
     shelfId: number,
-    userId: number
   ): Promise<boolean> {
-    const shelf = await this.shelfRepository.findUnique({
-      id: shelfId,
-    });
-
-    const book = await this.bookRepository.findUnique({
-      id: bookId,
-    });
-
-    if (shelf?.user_id !== userId) {
-      throw new Forbidden("User is trying to add book in another user shelf");
-    }
-
-    if (!shelf) {
-      throw new NotFound("The shelf id provided does not exist");
-    }
-
-    if (!book) {
-      throw new NotFound("The book id provided does not exist");
-    }
-
     const relationExists = await this.bookShelfRepository.findFirst({
-      book_id: book.id,
-      shelf_id: shelf.id,
+      book_id: bookId,
+      shelf_id: shelfId,
     });
 
     if (!relationExists) {
@@ -172,8 +141,8 @@ export class BookShelfService {
     }
 
     const deletedCount = await this.bookShelfRepository.deleteMany({
-      book_id: book.id,
-      shelf_id: shelf.id,
+      book_id: bookId,
+      shelf_id: shelfId,
     });
 
     if (deletedCount["count"] > 0) {
