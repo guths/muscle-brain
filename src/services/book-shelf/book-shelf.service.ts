@@ -189,7 +189,11 @@ export class BookShelfService {
         id: shelfId,
       },
       {
-        book: true,
+        books: {
+          include: {
+            book: true
+          }
+        },
       }
     );
 

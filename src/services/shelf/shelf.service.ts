@@ -1,4 +1,4 @@
-import { Forbidden } from "../../lib/Errors/errors";
+import { Forbidden, NotFound } from "../../lib/Errors/errors";
 import { removeSpecialCharacters } from "../../lib/Helper/string.helper";
 import prisma from "../../lib/Prisma/Prisma";
 import {
@@ -16,19 +16,11 @@ export class ShelfService {
   ) {}
 
   public async createShelf(name: string, userId: number) {
-    const user = await this.userRepository.findUnique({
-      id: userId,
-    });
-
-    if (!user) {
-      throw new Error("User does not exist");
-    }
-
     const corretedName = removeSpecialCharacters(name);
 
     const shelfExist = await this.shelfRepository.findFirst({
       name: corretedName,
-      user_id: user.id,
+      user_id: userId,
     });
 
     if (shelfExist) {
@@ -37,7 +29,7 @@ export class ShelfService {
 
     const shelf = await this.shelfRepository.create({
       name: corretedName,
-      user_id: user.id,
+      user_id: userId,
       is_default: false,
     });
 
@@ -82,19 +74,7 @@ export class ShelfService {
     return updatedShelf;
   }
 
-  public async deleteShelf(shelfId: number, userId: number) {
-    const existShelf = await this.shelfRepository.findUnique({
-      id: shelfId,
-    });
-
-    if (!existShelf) {
-      throw new Error("Shelf does not exist.");
-    }
-
-    if (existShelf.user_id !== userId) {
-      throw new Forbidden("User is trying to delete other user shelf");
-    }
-
+  public async deleteShelf(shelfId: number) {
     const deleteShelf = await this.shelfRepository.delete({
       id: shelfId,
     });
@@ -118,5 +98,17 @@ export class ShelfService {
         `Error while creating default shelves for User ID = ${userId}`
       );
     }
+  }
+
+  public async findShelfById(shelfId: number) {
+    const shelf = await this.shelfRepository.findUnique({
+      id: shelfId,
+    });
+
+    if (!shelf) {
+      throw new NotFound("Shelf not found");
+    }
+
+    return shelf;
   }
 }

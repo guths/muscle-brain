@@ -1,13 +1,33 @@
 import { NextFunction, Request, Response } from "express";
-import { Forbidden } from "../lib/Errors/errors";
+import { Forbidden, NotFound } from "../lib/Errors/errors";
+import { ShelfService } from "../services/shelf/shelf.service";
+import { PrismaShelfRepository } from "../repositories/prisma/prisma.shelf.repository";
+import { PrismaUserRepository } from "../repositories/prisma/prisma.user.repository";
+import { errorHandler } from "../lib/Errors/error.handler";
 
-export const shelfMiddleware = (request: any, response: Response, next: NextFunction) => {
-  const shelfUserId = request.body.user_id;
-  const authenticatedUserId = request.user.user_id;
+export const shelfMiddleware = async (
+  request: any,
+  response: Response,
+  next: NextFunction
+) => {
+  const shelfService = new ShelfService(
+    new PrismaShelfRepository(),
+    new PrismaUserRepository()
+  );
 
-  if(shelfUserId !== authenticatedUserId) {
-    throw new Forbidden('A shelf can not be create with another User ID');
+  
+
+  try {
+    const shelf = await shelfService.findShelfById(
+      Number(request.params.shelfId)
+    );
+
+    if (shelf?.user_id !== request.user.user_id) {
+      throw new Forbidden("This shelf belongs to another user");
+    }
+  } catch (e) {
+    errorHandler(e, request, response, next);
   }
 
   next();
-}
+};

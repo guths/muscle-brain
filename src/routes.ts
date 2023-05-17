@@ -6,8 +6,13 @@ import { loginValidator } from "./validators/login.validator";
 import { authMiddleware } from "./middleware/auth";
 import { shelfMiddleware } from "./middleware/shelf";
 import shelfController from "./controllers/shelf.controller";
-import { createShelfValidator, deleteShelfValidator, updateShelfValidator } from "./validators/shelf.validator";
+import {
+  createShelfValidator,
+  deleteShelfValidator,
+  updateShelfValidator,
+} from "./validators/shelf.validator";
 import { bookController } from "./controllers/book.controller";
+import { validateReqMidleware } from "./validators/validator";
 
 const routes = Router();
 
@@ -23,25 +28,31 @@ routes.post("/v1/login", loginValidator, authController.login);
 routes.post(
   "/v1/shelf",
   authMiddleware,
-  shelfMiddleware,
-  createShelfValidator,
+  validateReqMidleware(createShelfValidator),
   shelfController.create
 );
 
 routes.post(
-  "/v1/shelf/:bookId",
+  "/v1/shelf/:shelfId",
   authMiddleware,
+  validateReqMidleware(updateShelfValidator),
   shelfMiddleware,
-  updateShelfValidator,
   shelfController.update
 );
 
 routes.delete(
-  "/v1/shelf/:bookId",
+  "/v1/shelf/:shelfId",
+  authMiddleware,
+  validateReqMidleware(deleteShelfValidator),
+  shelfMiddleware,
+  shelfController.deleteShelf
+);
+
+routes.get(
+  "/v1/shelf/:shelfId/books",
   authMiddleware,
   shelfMiddleware,
-  deleteShelfValidator,
-  shelfController.deleteShelf
+  shelfController.getShelfBooks
 );
 
 routes.post(
@@ -49,13 +60,13 @@ routes.post(
   authMiddleware,
   shelfMiddleware,
   bookController.addBookShelf
-)
+);
 
 routes.delete(
   "/v1/book/shelf",
   authMiddleware,
   shelfMiddleware,
   bookController.removeBookShelf
-)
+);
 
 export default routes;
