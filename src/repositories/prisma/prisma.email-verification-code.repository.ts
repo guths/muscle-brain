@@ -18,4 +18,11 @@ export class PrismaEmailVerificationCodeRepository
       where: whereFields,
     });
   }
+
+  update(whereFields: object, data: object): Promise<EmailVerificationCode> {
+    return prisma.emailVerificationCode.update({
+      where: whereFields,
+      data: data,
+    });
+  }
 }

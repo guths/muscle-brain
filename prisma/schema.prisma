@@ -37,16 +37,17 @@ model Book {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  first_name String
-  last_name  String
-  Shelf      Shelf[]
+  id                     Int                     @id @default(autoincrement())
+  first_name             String
+  last_name              String
+  Shelf                  Shelf[]
   EmailVerificationCodes EmailVerificationCode[]
-  email      String   @unique(map: "email") @db.VarChar(255)
-  nickname   String   @unique(map: "nickname") @db.VarChar(255)
-  password   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  email                  String                  @unique(map: "email") @db.VarChar(255)
+  is_email_verified      Boolean                 @default(false)
+  nickname               String                  @unique(map: "nickname") @db.VarChar(255)
+  password               String
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @default(now())
 }
 
 model Publisher {
@@ -101,10 +102,10 @@ model Shelf {
 }
 
 model EmailVerificationCode {
-  id         Int              @id @default(autoincrement())
-  user       User             @relation(fields: [user_id], references: [id])
-  user_id    Int
-  code       String        @unique(map: "code") @db.VarChar(255)
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [user_id], references: [id])
+  user_id    Int       @unique(map: "user_id")
+  code       String    @unique(map: "code") @db.VarChar(255)
   verifiedAt DateTime?
 }
 

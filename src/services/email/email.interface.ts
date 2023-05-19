@@ -16,7 +16,6 @@ export interface SendEmailInterface {
   html: string
 }
 
-
 export interface EmailService {
-  sendEmail(sendEmailData: SendEmailInterface, emailTransporter: EmailTransporter)
+  sendEmail(sendEmailData: SendEmailInterface, emailTransporter: EmailTransporterInterface)
 }

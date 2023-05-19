@@ -1,14 +1,17 @@
 import { v4 as uuid } from "uuid";
 import { CreateEmailVerificationCode } from "../../../repositories/email-verification-code.repository";
 import { EmailVerificationCodeRepository } from "../../../repositories/email-verification-code.repository";
-import { NotFound } from "../../../lib/Errors/errors";
+import { Forbidden, NotFound } from "../../../lib/Errors/errors";
+import handlebars from "handlebars";
 import {
   EmailService,
   EmailTransporterInterface,
   SendEmailInterface,
 } from "../../email/email.interface";
+import { readFileSync } from "fs";
+import { User } from "@prisma/client";
 
-class EmailVerificationService {
+export class EmailVerificationService {
   constructor(
     private emailVerificationCodeRepository: EmailVerificationCodeRepository,
     private emailService: EmailService
@@ -28,40 +31,42 @@ class EmailVerificationService {
   }
 
   private async buildEmailVerificationCodeUrl(
-    userId: number,
+    code: string,
     url: string
   ): Promise<string> {
-    const verificationEntity =
-      await this.emailVerificationCodeRepository.findUnique({
-        userId: userId,
-      });
-
-    const code = verificationEntity?.code;
-
     return `${url}/api/v1/verify-email/${code}`;
   }
 
-  public async sendVerificationEmail(
-    userId: number,
-    userEmail: string,
-    appUrl: string
-  ) {
-    const code = this.emailVerificationCodeRepository.findUnique({
-      userId: userId,
-    });
+  public async sendVerificationEmail(user: User, appUrl: string) {
+    const verificationCodeEntity =
+      await this.emailVerificationCodeRepository.findUnique({
+        user_id: user.id,
+      });
 
-    if (!code) {
+    if (!verificationCodeEntity) {
       throw new NotFound("Vertification Email code not found");
     }
 
+    const html = readFileSync(
+      require.resolve("../../email/templates/email-verification.hbs"),
+      "utf-8"
+    );
+
+    const templateSource = handlebars.compile(html);
+
+    const data = {
+      name: user.first_name,
+      verificationLink: this.buildEmailVerificationCodeUrl(
+        verificationCodeEntity.code,
+        "https://www.bookxd.club/verify-email"
+      ),
+    };
+
     const sendEmailData = {
-      from: process.env.EMAIL_FROM,
-      to: userEmail,
+      from: process.env.EMAIL_FROM as string,
+      to: user.email,
       subject: "Activate your E-mail - Bookxd.club",
-      text: `Click here to activate your e-mail ${this.buildEmailVerificationCodeUrl(
-        userId,
-        appUrl
-      )}`,
+      html: templateSource(data),
     } as SendEmailInterface;
 
     const emailTransporter = {
@@ -74,11 +79,30 @@ class EmailVerificationService {
       },
     } as EmailTransporterInterface;
 
-    const response = await this.emailService.sendEmail(
-      sendEmailData,
-      emailTransporter
-    );
+    return await this.emailService.sendEmail(sendEmailData, emailTransporter);
+  }
 
-    console.log(response);
+  public async verifyEmailCode(code: string, userId: number) {
+    const verificationCodeEntity =
+      await this.emailVerificationCodeRepository.findUnique({
+        code: code,
+      });
+
+    if (!verificationCodeEntity) {
+      throw new NotFound("Code does not exist");
+    }
+
+    if (verificationCodeEntity.user_id !== userId) {
+      throw new Forbidden("User is trying to verify other user code");
+    }
+
+    return await this.emailVerificationCodeRepository.update(
+      {
+        code: code,
+      },
+      {
+        verifiedAt: new Date(),
+      }
+    );
   }
 }

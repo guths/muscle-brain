@@ -24,8 +24,17 @@ routes.get(
   googleBooksController.getBooksByTerm
 );
 
-routes.post("/v1/user", registerValidator, authController.register);
-routes.post("/v1/login", loginValidator, authController.login);
+routes.post(
+  "/v1/user",
+  validateReqMiddleware(registerValidator),
+  authController.register
+);
+
+routes.post(
+  "/v1/login",
+  validateReqMiddleware(loginValidator),
+  authController.login
+);
 
 routes.post(
   "/v1/shelf",

@@ -5,14 +5,14 @@ import {
 } from "./email.interface";
 import nodemailer from "nodemailer";
 
-class NodemailerEmailService implements EmailService {
+export class NodemailerEmailService implements EmailService {
   public async sendEmail(
     sendEmailData: SendEmailInterface,
     emailTransporter: EmailTransporterInterface
   ) {
-    if (process.env.APP_ENV === "local") {
-      emailTransporter = await this.getTestAccountTransporterData();
-    }
+    // if (process.env.APP_ENV === "local") {
+    //   emailTransporter = await this.getTestAccountTransporterData();
+    // }
 
     const transporter = nodemailer.createTransport(emailTransporter);
 

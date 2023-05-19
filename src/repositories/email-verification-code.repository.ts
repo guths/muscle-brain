@@ -9,4 +9,5 @@ export interface CreateEmailVerificationCode {
 export interface EmailVerificationCodeRepository {
   create(data: CreateEmailVerificationCode): Promise<EmailVerificationCode>;
   findUnique(whereFields: object): Promise<EmailVerificationCode | null>;
+  update(whereFields: object, data: object): Promise<EmailVerificationCode>
 }
