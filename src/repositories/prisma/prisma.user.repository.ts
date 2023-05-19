@@ -15,10 +15,16 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async findUnique(whereFields: object): Promise<User|null> {
+  async findUnique(whereFields: object): Promise<User | null> {
     return await prisma.user.findUnique({
-        where: whereFields
-    })
+      where: whereFields,
+    });
+  }
+
+  async update(whereFields: object, data: object): Promise<User> {
+    return await prisma.user.update({
+      where: whereFields,
+      data: data,
+    });
   }
 }
-

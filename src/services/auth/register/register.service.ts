@@ -8,6 +8,7 @@ import { ShelfRepository } from "../../../repositories/shelf.repository";
 import { EmailVerificationService } from "../email-validator/email-verification.service";
 import { PrismaEmailVerificationCodeRepository } from "../../../repositories/prisma/prisma.email-verification-code.repository";
 import { NodemailerEmailService } from "../../email/email.service";
+import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
 
 const PASSWORD_SALT = 10;
 
@@ -64,19 +65,18 @@ export class RegisterService {
 
     const emailService = new EmailVerificationService(
       new PrismaEmailVerificationCodeRepository(),
-      new NodemailerEmailService()
+      new NodemailerEmailService(),
+      new PrismaUserRepository()
     );
 
-    const emailVerificationCode = await emailService.generateEmailVerificationCode(user.id);
+    const emailVerificationCode =
+      await emailService.generateEmailVerificationCode(user.id);
 
     if (!emailVerificationCode) {
       throw new Error("Error when sending email verification code");
     }
 
-    await emailService.sendVerificationEmail(
-      user,
-      "http://localhost/"
-    );
+    await emailService.sendVerificationEmail(user, "http://localhost/");
 
     return {
       id: user.id,

@@ -64,7 +64,8 @@ class AuthController {
   ) {
     const emailVerificationService = new EmailVerificationService(
       new PrismaEmailVerificationCodeRepository(),
-      new NodemailerEmailService()
+      new NodemailerEmailService(),
+      new PrismaUserRepository
     );
 
     const code = request.params.code as string;

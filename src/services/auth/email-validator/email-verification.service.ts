@@ -10,11 +10,13 @@ import {
 } from "../../email/email.interface";
 import { readFileSync } from "fs";
 import { User } from "@prisma/client";
+import { UserRepository } from "../../../repositories/user.repository";
 
 export class EmailVerificationService {
   constructor(
     private emailVerificationCodeRepository: EmailVerificationCodeRepository,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private userRepository: UserRepository
   ) {}
 
   public async generateEmailVerificationCode(userId: number) {
@@ -95,6 +97,19 @@ export class EmailVerificationService {
     if (verificationCodeEntity.user_id !== userId) {
       throw new Forbidden("User is trying to verify other user code");
     }
+
+    if (verificationCodeEntity.verifiedAt) {
+      throw new Forbidden("User already confirmed e-mail");
+    }
+
+    await this.userRepository.update(
+      {
+        id: userId,
+      },
+      {
+        is_email_verified: true,
+      }
+    );
 
     return await this.emailVerificationCodeRepository.update(
       {

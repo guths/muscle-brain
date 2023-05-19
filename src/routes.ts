@@ -15,6 +15,7 @@ import {
 import { bookController } from "./controllers/book.controller";
 import { validateReqMiddleware } from "./validators/validator";
 import { bookMiddleware } from "./middleware/book";
+import { verifyEmailValidator } from "./validators/verify-email-validator";
 
 const routes = Router();
 
@@ -35,6 +36,13 @@ routes.post(
   validateReqMiddleware(loginValidator),
   authController.login
 );
+
+routes.get(
+  '/v1/verify-email/:code',
+  authMiddleware,
+  validateReqMiddleware(verifyEmailValidator),
+  authController.verifyEmail
+)
 
 routes.post(
   "/v1/shelf",
