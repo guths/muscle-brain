@@ -90,8 +90,6 @@ export class ShelfService {
           user_id: userId,
           is_default: true,
         });
-
-        console.log(shelf);
       }
     } catch (e) {
       throw new Error(

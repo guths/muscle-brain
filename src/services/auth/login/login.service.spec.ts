@@ -92,8 +92,4 @@ describe("Login Service Test", () => {
 
     expect(loginResponse).toHaveProperty("token");
   });
-
-  test("get right .env", async () => {
-    console.log("USERRRR", user);
-  });
 });

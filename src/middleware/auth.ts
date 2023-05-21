@@ -11,16 +11,23 @@ const authMiddleware = (
     throw new Forbidden("A Bearer token must be provided to be auth");
   }
 
+  //implementar alguma renovacao de token, verificar se a expiracao do token esta prestes a expirar e renov
+  // mudar a expiracao do token para 48h, se o token tiver menos de 24 horas da para renovar  
+  //da para procurar alguma coisa sobre salvar esses tokens no redis 
+
   const jwtService = new JwtService();
 
   const token = jwtService.getJwtToken(request.headers.authorization);
 
-  try {
-    const decoded = jwtService.verify(token);
+  try { 
+    let decoded = jwtService.verify(token);
+    
     request.user = decoded;
   } catch (e) {
     throw new Unauthorized("User are unauthorized");
   }
+
+  
 
   next();
 };

@@ -72,6 +72,8 @@ export class RegisterService {
     const emailVerificationCode =
       await emailService.generateEmailVerificationCode(user.id);
 
+    console.log('oq ta retornando nessa merda', emailVerificationCode);
+
     if (!emailVerificationCode) {
       throw new Error("Error when sending email verification code");
     }
