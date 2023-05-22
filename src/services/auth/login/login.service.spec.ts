@@ -11,17 +11,6 @@ describe("Login Service Test", () => {
 
   beforeAll(async () => {
     process.env.API_TOKEN_KEY = "rockandstone";
-    prisma.$connect()
-
-    user = await prisma.user.create({
-      data: {
-        first_name: "Jonathan",
-        last_name: "Guths",
-        nickname: "jguths",
-        email: "jonathanguths@gmail.com",
-        password: "rockandstone",
-      }
-    })
   });
 
   it("should throw user not found error", async () => {
@@ -92,4 +81,8 @@ describe("Login Service Test", () => {
 
     expect(loginResponse).toHaveProperty("token");
   });
+
+  test("get right .env", async () => {
+    console.log("testttt", process.env.DATABASE_URL);
+  })
 });

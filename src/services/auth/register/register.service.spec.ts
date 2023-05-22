@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { prismaMock } from "../../../lib/Prisma/prisma.mock";
 import { RegisterService } from "./register.service";
 import { RegisterDto } from "../../../dto/register.dto";
@@ -7,11 +7,13 @@ import { PrismaShelfRepository } from "../../../repositories/prisma/prisma.shelf
 import { EmailVerificationService } from "../email-validator/email-verification.service";
 
 describe("Register Service Test", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     process.env.API_TOKEN_KEY = "rockandstone";
   });
 
   it("should create new user", async () => {
+    
+
     const user = {
       id: 1,
       first_name: "Jonathan",

@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id                  Int                 @id @default(autoincrement())
+  google_book_id      String              @unique(map: "google_book_id") @db.VarChar(255)
+  title               String
+  publisher           Publisher?          @relation(fields: [publisher_id], references: [id])
+  publisher_id        Int?
+  published_date      DateTime
+  description         String?
+  page_count          Int
+  main_category       String?
+  average_rating      Float?
+  image_link_small    String?
+  image_link_medium   String?
+  image_link_large    String?
+  language            String
+  list_price_amount   Float?
+  list_price_currency String?
+  categories_books    CategoriesOnBooks[]
+  authors             AuthorsOnBooks[]
+  shelves             BooksOnShelves[]
+  email_verified_at   DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @default(now())
+}
+
+model User {
+  id                     Int                     @id @default(autoincrement())
+  first_name             String
+  last_name              String
+  Shelf                  Shelf[]
+  EmailVerificationCodes EmailVerificationCode[]
+  email                  String                  @unique(map: "email") @db.VarChar(255)
+  is_email_verified      Boolean                 @default(false)
+  nickname               String                  @unique(map: "nickname") @db.VarChar(255)
+  password               String
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @default(now())
+}
+
+model Publisher {
+  id        Int      @id @default(autoincrement())
+  name      String
+  Book      Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model BookCategory {
+  id    Int                 @id @default(autoincrement())
+  name  String
+  books CategoriesOnBooks[]
+}
+
+model CategoriesOnBooks {
+  book             Book         @relation(fields: [book_id], references: [id])
+  book_id          Int
+  book_category    BookCategory @relation(fields: [book_category_id], references: [id])
+  book_category_id Int
+
+  @@id([book_id, book_category_id])
+}
+
+model AuthorsOnBooks {
+  book      Book   @relation(fields: [book_id], references: [id])
+  book_id   Int
+  author    Author @relation(fields: [author_id], references: [id])
+  author_id Int
+
+  @@id([book_id, author_id])
+}
+
+model Author {
+  id        Int              @id @default(autoincrement())
+  name      String
+  books     AuthorsOnBooks[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
+}
+
+model Shelf {
+  id         Int              @id @default(autoincrement())
+  name       String
+  user       User             @relation(fields: [user_id], references: [id])
+  user_id    Int
+  books      BooksOnShelves[]
+  is_default Boolean?         @default(false)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @default(now())
+}
+
+model EmailVerificationCode {
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [user_id], references: [id])
+  user_id    Int       @unique(map: "user_id")
+  code       String    @unique(map: "code") @db.VarChar(255)
+  verifiedAt DateTime?
+}
+
+model BooksOnShelves {
+  book     Book  @relation(fields: [book_id], references: [id])
+  book_id  Int
+  shelf    Shelf @relation(fields: [shelf_id], references: [id])
+  shelf_id Int
+
+  @@id([book_id, shelf_id])
+}

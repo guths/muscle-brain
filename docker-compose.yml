@@ -27,17 +27,17 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-  database_test:
-    image: postgres:12.1-alpine
-    container_name: app_database_test
+  postgres-test:
+    image: postgres
+    restart: always
+    container_name: muscle-brain-db-test
     networks:
       - server-network
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=app_database_test
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
     ports:
-      - "5433:5432"
+      - '5433:5432'
   adminer:
     image: adminer
     restart: always
