@@ -12,8 +12,6 @@ describe("Register Service Test", () => {
   });
 
   it("should create new user", async () => {
-    
-
     const user = {
       id: 1,
       first_name: "Jonathan",
