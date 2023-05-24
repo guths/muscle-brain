@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { googleBooksController } from "./controllers/google-books.controller";
 import { authController } from "./controllers/auth.controller";
 import { registerValidator } from "./validators/register.validator";
@@ -16,8 +16,14 @@ import { bookController } from "./controllers/book.controller";
 import { validateReqMiddleware } from "./validators/validator";
 import { bookMiddleware } from "./middleware/book";
 import { verifyEmailValidator } from "./validators/verify-email-validator";
+import { redisLimitHandler } from "./middleware/redis-limit";
 
 const routes = Router();
+
+routes.get('/v1/working', redisLimitHandler, (req: Request, res: Response) => {
+  console.log('sadhjasjkhdkhajsdkjhsa')
+  return res.json('deu boa')
+})
 
 routes.get(
   "/v1/books/search",

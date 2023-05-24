@@ -10,7 +10,7 @@ const option: RedisOptions = {
 };
 
 const client = new Redis(option);
-const LIMIT_PER_SECOND = 3;
+const LIMIT_PER_SECOND = 60;
 const DURATION = 60;
 
 export const redisLimitHandler = async (req: Request, res: Response, next: NextFunction) => {
