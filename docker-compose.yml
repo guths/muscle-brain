@@ -2,7 +2,7 @@ version: '1.0'
 services:
   app:
     container_name: muscle-brain-api
-    command: npx nodemon --inspect=app:9229 --signal SIGINT --nolazy ./src/server.ts
+    # command: npx nodemon --inspect=app:9229 --signal SIGINT --nolazy ./src/server.ts
     build:
       context: ./
       dockerfile: Dockerfile
@@ -17,6 +17,12 @@ services:
       - postgres
       - redis
     environment:
+      APP_ENV: local
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_KEY: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_ACCESS_KEY: dummy
+      AWS_REGION: us-east-1
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: teste123
@@ -28,8 +34,24 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass teste123
     networks:
       - server-network
+    links:
+      - redis-commander
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    networks:
+      - server-network
+    environment:
+      REDIS_HOSTS: redis
+      REDIS_HOST: redis
+      REDIS_PORT: redis:6379
+      REDIS_PASSWORD: teste123
+      HTTP_USER: root
+      HTTP_PASSWORD: root
+    ports:
+      - 8081:8081
   postgres:
-    image: postgres
+    image: postgres:14
     restart: always
     container_name: muscle-brain-db
     networks:
@@ -38,20 +60,9 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=123456
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres-novo:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-  postgres-test:
-    image: postgres
-    restart: always
-    container_name: muscle-brain-db-test
-    networks:
-      - server-network
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=123456
-    ports:
-      - '5433:5432'
   adminer:
     image: adminer
     restart: always
@@ -59,8 +70,22 @@ services:
       - server-network
     ports:
       - 8080:8080
+  localstack:
+    container_name: "localstack-muscle"
+    image: localstack/localstack
+    networks:
+      - server-network
+    ports:
+      - "4566-4583:4566-4583"
+    environment:
+      - SERVICES=sqs,sns
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+      - DEBUG=1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
 volumes:
-  postgres:
+  postgres-novo:
 networks:
   server-network:
     driver: bridge

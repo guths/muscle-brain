@@ -32,6 +32,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.338.0",
     "@prisma/client": "4.7.1",
     "@types/nodemailer": "^6.4.7",
     "bcryptjs": "^2.4.3",
@@ -47,6 +48,7 @@
     "nodemailer": "^6.9.2",
     "pg": "^8.10.0",
     "request-ip": "^3.3.0",
+    "sqs-consumer": "^7.1.0",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
   }
