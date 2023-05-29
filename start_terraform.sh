@@ -1,5 +1,6 @@
 #!/bin/sh
 
 terraform init 
-terraform apply -destroy -auto-approve
+terraform destroy -auto-approve
+terraform apply -auto-approve
 npm run start:dev

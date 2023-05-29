@@ -119,3 +119,8 @@
 {"level":"error","message":{"content":{"code":500,"message":"connect ECONNREFUSED 127.0.0.1:587","name":"Internal Server Error","status":"error"},"title":"API Reponse Critical"},"pid":40,"requestId":"95ff05d1-ec33-47af-8743-ee5e33b0eb5b","timestamp":"2023-05-25T13:39:05.262Z"}
 {"level":"error","message":{"content":{"code":500,"message":"User already exists","name":"Internal Server Error","status":"error"},"title":"API Reponse Critical"},"pid":40,"requestId":"95ff05d1-ec33-47af-8743-ee5e33b0eb5b","timestamp":"2023-05-25T13:39:50.460Z"}
 {"level":"error","message":{"content":{"code":500,"message":"connect ECONNREFUSED 127.0.0.1:587","name":"Internal Server Error","status":"error"},"title":"API Reponse Critical"},"pid":40,"requestId":"95ff05d1-ec33-47af-8743-ee5e33b0eb5b","timestamp":"2023-05-25T13:40:02.155Z"}
+
+
+
+
+

@@ -1,7 +1,7 @@
 provider "aws" {
 
-  access_key = "mock_access_key"
-  secret_key = "mock_secret_key"
+  access_key = "dummy"
+  secret_key = "dummy"
   region     = "us-east-1"
 
   s3_use_path_style           = true
@@ -16,9 +16,7 @@ provider "aws" {
 
 resource "aws_sqs_queue" "send_verification_email" {
   name = "send_verification_email"
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 
+  
