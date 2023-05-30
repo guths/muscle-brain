@@ -79,6 +79,9 @@ export class EmailVerificationService {
         user: process.env.EMAIL_AUTH_USER as string,
         pass: process.env.EMAIL_AUTH_PASSWORD as string,
       },
+      tls:{
+        rejectUnAuthorized:true
+      }
     } as EmailTransporterInterface;
 
     return await this.emailService.sendEmail(sendEmailData, emailTransporter);

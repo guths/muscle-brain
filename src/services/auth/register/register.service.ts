@@ -9,8 +9,10 @@ import { EmailVerificationService } from "../email-validator/email-verification.
 import { PrismaEmailVerificationCodeRepository } from "../../../repositories/prisma/prisma.email-verification-code.repository";
 import { NodemailerEmailService } from "../../email/email.service";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
+import { sendMessageToQueue } from "../../../lib/aws/sqs/send-message";
 
 const PASSWORD_SALT = 10;
+const SEND_VERIFICATION_EMAIL_QUEUE = process.env.SEND_VERIFICATION_EMAIL_QUEUE as string;
 
 export class RegisterService {
   constructor(
@@ -76,7 +78,11 @@ export class RegisterService {
       throw new Error("Error when sending email verification code");
     }
 
-    await emailService.sendVerificationEmail(user, "http://localhost/");
+    const stringUser = JSON.stringify(user);
+
+    if (user) {
+      await sendMessageToQueue(stringUser, SEND_VERIFICATION_EMAIL_QUEUE);
+    }
 
     return {
       id: user.id,

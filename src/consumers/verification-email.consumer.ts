@@ -18,7 +18,7 @@ const handleMessage = async function (message: Message): Promise<void> {
     }
 
     const messageBody = JSON.parse(message.Body);
-    const formattedMessage = JSON.parse(messageBody.Message);
+    console.log('message bodyyyy, ',messageBody)
 
     const emailService = new EmailVerificationService(
       new PrismaEmailVerificationCodeRepository(),
@@ -26,15 +26,14 @@ const handleMessage = async function (message: Message): Promise<void> {
       new PrismaUserRepository()
     );
 
-    if (!formattedMessage.user) {
+    if (!messageBody.id) {
       Logger.critical("Message without user", { message });
       return;
     }
 
-    const user = formattedMessage.user as User;
-
-    await emailService.sendVerificationEmail(user, "http://localhost/");
+    await emailService.sendVerificationEmail(messageBody as User, "http://localhost/");
   } catch (e) {
+    console.log('ta dando ruim aqui', e)
     Logger.critical("Consumer failed ", { e });
     return;
   }
