@@ -3,7 +3,21 @@ import { prismaMock } from "../../../lib/Prisma/prisma.mock";
 import LoginService from "./login.service";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
 import bcrypt from "bcryptjs";
-import prisma from "../../../lib/Prisma/Prisma";
+
+afterAll(async () => {
+  const prisma = new PrismaClient({
+    datasources: {
+      db: { url: "postgresql://prisma:prisma@localhost:5433/tests" },
+    },
+  });
+
+  await prisma.author.deleteMany();
+
+  let users = await prisma.author.findMany();
+
+  console.log(users);
+});
+
 
 describe("Login Service Test", () => {
   const PASSWORD_SALT = 10;
@@ -83,11 +97,10 @@ describe("Login Service Test", () => {
   });
 
   test("get right .env", async () => {
-    const prisma = new PrismaClient({ datasources: {  db: { url: "postgresql://prisma:prisma@localhost:5433/tests" } } });
-    console.log(await prisma.author.create({
-      data: {
-        name: 'test'
-      }
-    }))
+    const prisma = new PrismaClient({
+      datasources: {
+        db: { url: "postgresql://prisma:prisma@localhost:5433/tests" },
+      },
+    });
   });
 });

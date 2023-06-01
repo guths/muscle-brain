@@ -5,6 +5,19 @@ import { RegisterDto } from "../../../dto/register.dto";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
 import { PrismaShelfRepository } from "../../../repositories/prisma/prisma.shelf.repository";
 import { EmailVerificationService } from "../email-validator/email-verification.service";
+import { SQS } from "@aws-sdk/client-sqs";
+
+
+jest.mock("@aws-sdk/client-sqs", () => {
+  const SQSMocked = {
+    sendMessage: jest.fn().mockReturnThis(),
+    promise: jest.fn()
+  };
+
+  return {
+    SQS: jest.fn(() => SQSMocked)
+  };
+});
 
 describe("Register Service Test", () => {
   beforeAll(async () => {
@@ -25,8 +38,15 @@ describe("Register Service Test", () => {
 
     prismaMock.user.create.mockResolvedValue(user as User);
 
-    EmailVerificationService.prototype.generateEmailVerificationCode = jest.fn().mockReturnValue(true);
-    EmailVerificationService.prototype.sendVerificationEmail = jest.fn().mockReturnValue(true);
+    EmailVerificationService.prototype.generateEmailVerificationCode = jest
+      .fn()
+      .mockReturnValue(true);
+    EmailVerificationService.prototype.sendVerificationEmail = jest
+      .fn()
+      .mockReturnValue(true);
+    jest.mock("../../../lib/aws/sqs/send-message.ts", () => {
+      sendMessageToQueue: jest.fn();
+    });
 
     const registerService = new RegisterService(
       new PrismaUserRepository(),
