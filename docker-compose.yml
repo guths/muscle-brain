@@ -1,11 +1,13 @@
 version: '1.0'
 services:
   app:
+    &default
     container_name: muscle-brain-api
     # command: npx nodemon --inspect=app:9229 --signal SIGINT --nolazy ./src/server.ts
     build:
       context: ./
       dockerfile: Dockerfile
+      target: local
     volumes:
       - .:/app
     ports:
@@ -63,6 +65,16 @@ services:
       - postgres-novo:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  db:
+    image: postgres:13
+    restart: always
+    container_name: integration-tests-prisma
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: tests
   adminer:
     image: adminer
     restart: always
@@ -78,7 +90,7 @@ services:
     ports:
       - "4566-4583:4566-4583"
     environment:
-      - SERVICES=sqs,sns
+      - SERVICES=sqs,sns,rds
       - AWS_DEFAULT_REGION=us-east-1
       - EDGE_PORT=4566
       - DEBUG=1

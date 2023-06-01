@@ -1,4 +1,4 @@
-import { PrismaClient, User} from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { prismaMock } from "../../../lib/Prisma/prisma.mock";
 import LoginService from "./login.service";
 import { PrismaUserRepository } from "../../../repositories/prisma/prisma.user.repository";
@@ -83,6 +83,11 @@ describe("Login Service Test", () => {
   });
 
   test("get right .env", async () => {
-    console.log("testttt", process.env.DATABASE_URL);
-  })
+    const prisma = new PrismaClient({ datasources: {  db: { url: "postgresql://prisma:prisma@localhost:5433/tests" } } });
+    console.log(await prisma.author.create({
+      data: {
+        name: 'test'
+      }
+    }))
+  });
 });

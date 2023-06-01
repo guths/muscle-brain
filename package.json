@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "npx nodemon",
-    "test": "dotenv -e .env.test -- jest -i"
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "test": "dotenv -e .env.test -- npx prisma migrate deploy && jest -i"
   },
   "keywords": [],
   "author": "",
