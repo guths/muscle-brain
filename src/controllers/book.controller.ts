@@ -23,7 +23,7 @@ class BookController {
       google_book_id: request.body.google_book_id,
       shelf_id: request.body.shelf_id,
     } as BookShelfDto;
-
+            
     const bookShelfService = new BookShelfService(
       new PrismaBookRepository(),
       new PrismaShelfRepository(),

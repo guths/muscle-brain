@@ -12,10 +12,6 @@ afterAll(async () => {
   });
 
   await prisma.author.deleteMany();
-
-  let users = await prisma.author.findMany();
-
-  console.log(users);
 });
 
 

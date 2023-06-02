@@ -65,18 +65,18 @@ model BookCategory {
 }
 
 model CategoriesOnBooks {
-  book             Book         @relation(fields: [book_id], references: [id])
+  book             Book         @relation(fields: [book_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   book_id          Int
-  book_category    BookCategory @relation(fields: [book_category_id], references: [id])
+  book_category    BookCategory @relation(fields: [book_category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   book_category_id Int
 
   @@id([book_id, book_category_id])
 }
 
 model AuthorsOnBooks {
-  book      Book   @relation(fields: [book_id], references: [id])
+  book      Book   @relation(fields: [book_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   book_id   Int
-  author    Author @relation(fields: [author_id], references: [id])
+  author    Author @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   author_id Int
 
   @@id([book_id, author_id])
@@ -110,9 +110,9 @@ model EmailVerificationCode {
 }
 
 model BooksOnShelves {
-  book     Book  @relation(fields: [book_id], references: [id])
+  book     Book  @relation(fields: [book_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   book_id  Int
-  shelf    Shelf @relation(fields: [shelf_id], references: [id])
+  shelf    Shelf @relation(fields: [shelf_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   shelf_id Int
 
   @@id([book_id, shelf_id])

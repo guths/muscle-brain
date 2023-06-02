@@ -56,7 +56,7 @@ export class BookService {
             name: bookCategoryName,
           });
         }
-
+        
         bookCategories.push(bookCategory);
       }
     }
