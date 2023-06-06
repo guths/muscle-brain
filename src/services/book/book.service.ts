@@ -5,6 +5,7 @@ import { BookCategoryRepository } from "../../repositories/book-category.reposit
 import { PublisherRepository } from "../../repositories/publisher.repository";
 import { BookRepository } from "../../repositories/book.repository";
 import { NotFound } from "../../lib/Errors/errors";
+import { Conflit } from "../../lib/Errors/errors";
 
 export class BookService {
   constructor(
@@ -15,6 +16,14 @@ export class BookService {
   ) {}
 
   public async createBook(createBookDto: CreateBookDto): Promise<Book> {
+    const bookExists = await this.bookRepository.findUnique({
+      google_book_id: createBookDto.google_book_id,
+    });
+
+    if (bookExists) {
+      throw new Conflit("This book already been stored");
+    }
+
     let authors: Array<Author>;
     authors = [];
 
@@ -56,7 +65,7 @@ export class BookService {
             name: bookCategoryName,
           });
         }
-        
+
         bookCategories.push(bookCategory);
       }
     }

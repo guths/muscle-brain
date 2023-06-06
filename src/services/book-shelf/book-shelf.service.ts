@@ -37,9 +37,17 @@ export class BookShelfService {
       id: bookShelfDto.shelf_id,
     });
 
+    if (!shelf) {
+      throw new NotFound("Shelf not found");
+    }
+
     const book = await this.bookRepository.findUnique({
       google_book_id: bookShelfDto.google_book_id,
     });
+
+    if (!book) {
+      throw new NotFound("Book not found");
+    }
 
     if (book && shelf) {
       const relationExists = await this.bookShelfRepository.findFirst({
@@ -129,7 +137,7 @@ export class BookShelfService {
 
   public async removeBookShelf(
     bookId: number,
-    shelfId: number,
+    shelfId: number
   ): Promise<boolean> {
     const relationExists = await this.bookShelfRepository.findFirst({
       book_id: bookId,
@@ -160,8 +168,8 @@ export class BookShelfService {
       {
         books: {
           include: {
-            book: true
-          }
+            book: true,
+          },
         },
       }
     );

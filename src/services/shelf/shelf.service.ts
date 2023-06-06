@@ -17,7 +17,7 @@ export class ShelfService {
 
   public async createShelf(name: string, userId: number) {
     const corretedName = removeSpecialCharacters(name);
-
+    
     const shelfExist = await this.shelfRepository.findFirst({
       name: corretedName,
       user_id: userId,
@@ -37,7 +37,7 @@ export class ShelfService {
   }
 
   public async updateShelf(updatedShelfData: UpdateShelfData) {
-    const existShelf = await this.shelfRepository.findUnique({
+    const existShelf = await this.shelfRepository.findFirst({
       id: updatedShelfData.id,
     });
 
